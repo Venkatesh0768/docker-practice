@@ -2,6 +2,9 @@
 
 
 ### git clone
+```bash
 git clone https://github.com/Venkatesh0768/docker-practice.git
 cd docker-practice
+```
+
 
