@@ -1,37 +1,3 @@
-# # ---------- Stage 1: Build ----------
-# FROM node:22-alpine AS builder
-
-# WORKDIR /app
-
-# # Copy package files
-# COPY package.json package-lock.json ./
-
-# # Install dependencies
-# RUN npm install
-
-# # Copy all source code
-# COPY . .
-
-# # Build the app
-# RUN npm run build
-
-
-# # ---------- Stage 2: Production ----------
-# FROM nginx:alpine
-
-# # Remove default nginx config
-# RUN rm -rf /usr/share/nginx/html/*
-
-# # Copy build files from builder
-# COPY --from=builder /app/dist /usr/share/nginx/html
-
-# # Expose port
-# EXPOSE 80
-
-# # Start nginx
-# CMD ["nginx", "-g", "daemon off;"]
-
-
 # ---------- Stage 1: Build ----------
 FROM node:22-alpine AS builder
 
@@ -46,7 +12,7 @@ RUN npm install
 # Copy all source code
 COPY . .
 
-# Build the app WITHOUT .env file
+# Build the app
 RUN npm run build
 
 
@@ -59,36 +25,9 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copy build files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Create a template for env-config.js
-RUN cat > /usr/share/nginx/html/env-config.js.template << 'EOF'
-window.ENV = {
-  VITE_API_URL: "${VITE_API_URL}"
-};
-EOF
-
-# Create entrypoint script
-RUN cat > /docker-entrypoint.sh << 'EOF'
-#!/bin/sh
-set -e
-
-echo "=== Generating runtime config ==="
-echo "VITE_API_URL: ${VITE_API_URL}"
-
-# Replace template variables with actual environment variables
-envsubst < /usr/share/nginx/html/env-config.js.template > /usr/share/nginx/html/env-config.js
-
-echo "=== Generated env-config.js ==="
-cat /usr/share/nginx/html/env-config.js
-
-# Start nginx
-exec nginx -g 'daemon off;'
-EOF
-
-RUN chmod +x /docker-entrypoint.sh
-
 # Expose port
 EXPOSE 80
 
-# Use custom entrypoint
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
 
