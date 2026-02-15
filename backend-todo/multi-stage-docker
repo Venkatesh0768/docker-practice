@@ -1,0 +1,44 @@
+#Step 1 Buid
+
+FROM eclipse-temurin:21-jdk AS builder
+
+WORKDIR /app
+
+#Copy only need files
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+# Download dependencies only once
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+
+#copy the all source code 
+COPY src src
+
+#Buidl the application skips the tests for the faster build 
+
+RUN ./mvnw clean package -DskipTests -B
+
+
+
+#----- stage 2 -------
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+#copy the built jar file from the builder to stage 
+
+COPY --from=builder /app/target/*.jar app.jar
+
+# Expose the port Spring Boot will listen on
+EXPOSE 8081
+
+
+# Set environment vars defaults (optional)
+ENV SERVER_PORT=8081
+
+ENTRYPOINT ["java" , "-jar" , "/app/app.jar"]
+
+

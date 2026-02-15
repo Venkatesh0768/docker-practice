@@ -1,0 +1,31 @@
+# ---------- Stage 1: Build ----------
+FROM eclipse-temurin:21-jdk AS builder
+
+WORKDIR /app
+
+# Copy Maven wrapper and config
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+# Download dependencies
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+
+# Copy source and build JAR
+COPY src src
+RUN ./mvnw clean package -DskipTests -B
+
+# ---------- Stage 2: Distroless Runtime ----------
+FROM gcr.io/distroless/java21-debian12
+
+WORKDIR /app
+
+# Copy built jar
+COPY --from=builder /app/target/*.jar app.jar
+
+# Expose the port (optional metadata; Distroless won't open sockets itself)
+EXPOSE 8081
+
+# Run the application
+CMD ["app.jar"]
+
