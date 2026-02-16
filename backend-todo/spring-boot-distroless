@@ -11,6 +11,8 @@ COPY pom.xml .
 # Download dependencies
 RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
+RUN apt-get update && apt-get install -y curl
+
 # Copy source and build JAR
 COPY src src
 RUN ./mvnw clean package -DskipTests -B
