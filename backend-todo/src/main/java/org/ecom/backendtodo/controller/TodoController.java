@@ -15,6 +15,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/todos")
 @RequiredArgsConstructor
+@CrossOrigin(
+        origins = "http://34.255.191.241:3000",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
+        allowCredentials = "true"
+)
 public class TodoController {
 
     private final TodoService todoService;
