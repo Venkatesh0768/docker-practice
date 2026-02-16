@@ -8,7 +8,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TodoRepository extends JpaRepository<Todo, UUID> {
-   boolean existsTodoByUser_Id(UUID userId);
 
-   List<Todo> findAllByUser_Id(UUID userId);
 }

@@ -2,38 +2,33 @@ package org.ecom.backendtodo.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.ecom.backendtodo.dto.TodoRequestDto;
-import org.ecom.backendtodo.dto.TodoResponseDto;
+import org.ecom.backendtodo.dto.TodoRequest;
+import org.ecom.backendtodo.model.Todo;
 import org.ecom.backendtodo.service.TodoService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/todos")
 @RequiredArgsConstructor
-@CrossOrigin(
-        origins = "http://34.255.191.241:3000",
-        allowedHeaders = "*",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
-        allowCredentials = "true"
-)
 public class TodoController {
 
     private final TodoService todoService;
 
     @PostMapping
-    public ResponseEntity<TodoResponseDto> createTodo(@RequestBody  TodoRequestDto requestDto){
-        TodoResponseDto responseDto = todoService.createTodo(requestDto);
-        return  new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    public ResponseEntity<Todo> createTodo(@RequestBody TodoRequest request) {
+        Todo response = todoService.createTodo(request.getTitle());
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{userid}")
-    public ResponseEntity<List<TodoResponseDto>> getAllTodoByUserId(@PathVariable UUID userid){
-        List<TodoResponseDto> responseDtos = todoService.getAllTodos(userid);
-        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
-     }
+
+    @GetMapping
+    public ResponseEntity<List<Todo>> getAllTodo() {
+        List<Todo> response = todoService.getAllTodo();
+        return ResponseEntity.ok(response);
+    }
+
+
 }

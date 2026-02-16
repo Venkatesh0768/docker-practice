@@ -20,11 +20,4 @@ public class Todo {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private boolean completed;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    private User user;
-
 }
