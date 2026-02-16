@@ -1,133 +1,110 @@
 import React, { useState, useEffect } from "react";
-import { useUser } from "../context/UserContext";
-import { fetchTodosByUserId, createTodo } from "../API/api";
+import { fetchTodos, createTodo } from "../API/api";
 
 const TodoPage = () => {
-  const { user, login } = useUser();
-  const [usernameInput, setUsernameInput] = useState("");
+  
+
+
   const [todoTitle, setTodoTitle] = useState("");
   const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const fetchTodos = React.useCallback(async () => {
-    if (!user?.id) return;
+  const loadTodos = async () => {
     try {
-      const data = await fetchTodosByUserId(user.id);
+      setLoading(true);
+      const data = await fetchTodos();
       setTodos(data);
     } catch (error) {
       console.error("Error fetching todos:", error);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchTodos();
-  }, [fetchTodos]);
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (usernameInput.trim()) {
-      login(usernameInput);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
+
+
   const handleAddTodo = async (e) => {
     e.preventDefault();
-    if (!todoTitle.trim() || !user?.id) return;
+    if (!todoTitle.trim()) return;
 
     try {
-      const newTodo = {
-        title: todoTitle,
-        completed: false,
-        userId: user.id,
-      };
-      await createTodo(newTodo);
+      await createTodo({ title: todoTitle });
       setTodoTitle("");
-      fetchTodos(); // Refresh list
+      loadTodos();
     } catch (error) {
       console.error("Error adding todo:", error);
     }
   };
 
-  if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <div className="p-8 bg-white rounded shadow-md w-96">
-          <h2 className="mb-4 text-2xl font-bold text-center">Login</h2>
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <input
-              type="text"
-              placeholder="Enter Username"
-              value={usernameInput}
-              onChange={(e) => setUsernameInput(e.target.value)}
-              className="p-2 border rounded"
-            />
-            <button
-              type="submit"
-              className="p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-            >
-              Enter
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
+
+
+
+
+  
+  // TODO PAGE UI
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Todo List</h1>
-          <span className="text-gray-600">User: {user.username}</span>
-        </div>
+    <div className="min-h-screen bg-gray-100">
 
-        <div className="p-6 mb-8 bg-white rounded shadow">
-          <h2 className="mb-4 text-xl font-semibold">Add New Todo</h2>
-          <form onSubmit={handleAddTodo} className="flex gap-2">
+      <div className="max-w-4xl p-6 mx-auto">
+        {/* CREATE TODO CARD */}
+        <div className="p-6 mb-8 bg-white shadow-lg rounded-2xl">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            Create a New Todo
+          </h2>
+
+          <form onSubmit={handleAddTodo} className="flex gap-3">
             <input
               type="text"
-              placeholder="Todo Title"
+              placeholder="Enter your task..."
               value={todoTitle}
               onChange={(e) => setTodoTitle(e.target.value)}
-              className="flex-1 p-2 border rounded"
+              className="flex-1 p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
             />
+
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+              className="px-6 py-3 font-semibold text-white transition bg-indigo-600 rounded-xl hover:bg-indigo-700"
             >
               Add
             </button>
           </form>
         </div>
 
-        <div className="bg-white rounded shadow">
-          <h2 className="p-4 text-xl font-semibold border-b">My Todos</h2>
-          <ul>
-            {todos.length === 0 ? (
-              <li className="p-6 text-center text-gray-500">
-                No todos found. Add one above!
-              </li>
-            ) : (
-              todos.map((todo) => (
+        {/* TODO LIST */}
+        <div className="p-6 bg-white shadow-lg rounded-2xl">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            Todo List
+          </h2>
+
+          {loading ? (
+            <p className="text-center text-gray-500">Loading todos...</p>
+          ) : todos.length === 0 ? (
+            <p className="text-center text-gray-500">
+              No todos found. Add one above!
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {todos.map((todo) => (
                 <li
                   key={todo.id}
-                  className="flex items-center justify-between p-4 border-b last:border-b-0"
+                  className="flex items-center justify-between p-4 transition border rounded-xl hover:shadow-md"
                 >
-                  <span
-                    className={
-                      todo.completed ? "line-through text-gray-400" : ""
-                    }
-                  >
+                  <span className="font-medium text-gray-700">
                     {todo.title}
                   </span>
-                  <span
-                    className={`px-2 py-1 text-xs rounded ${todo.completed ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
-                  >
-                    {todo.completed ? "Completed" : "Pending"}
+
+                  <span className="px-3 py-1 text-sm font-semibold text-indigo-700 bg-indigo-100 rounded-full">
+                    Task
                   </span>
                 </li>
-              ))
-            )}
-          </ul>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
