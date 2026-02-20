@@ -10,6 +10,13 @@ pipeline {
                 git url: "https://github.com/Venkatesh0768/docker-practice.git", branch: "main"
             }
         }
+        stage("trivy security checks") {
+            steps {
+               sh  "trivy fs . -o results.json"
+            }
+        }
+
+        
 
         stage("Build Frontend Image") {
             steps {
@@ -65,6 +72,7 @@ pipeline {
     post {
         failure{
             emailtext(
+                attachLog: true;
                 to: "rapoluvenky8@gmail.com",
                 subject: "Build Failed : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "Build ${env.BUILD_NUMBER} failed. Check Jenkins console output.",
