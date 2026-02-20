@@ -16,7 +16,9 @@ pipeline {
         }
         stage("trivy security checks") {
             steps {
-               sh  "trivy fs . -o results.json"
+               script{
+                   trivy_fs()
+               }
             }
         }
 
@@ -25,7 +27,8 @@ pipeline {
         stage("Build Frontend Image") {
             steps {
                 dir("frontend") {
-                    sh "docker build -t venkatesh0768/frontend-docker:latest -f docker-production ."
+                    // sh "docker build -t venkatesh0768/frontend-docker:latest -f docker-production ."
+                    frontend_image(venkatesh0768 , frontend-docker ,docker-production)
                 }
             }
         }
@@ -33,7 +36,8 @@ pipeline {
         stage("Build Backend Image") {
             steps {
                 dir("backend-todo") {
-                    sh "docker build -t venkatesh0768/backend-docker:latest -f spring-boot-distroless ."
+                    // sh "docker build -t venkatesh0768/backend-docker:latest -f spring-boot-distroless ."
+                    backend_image(venkatesh0768 ,backend-docker , spring-boot-distroless )
                 }
             }
         }
@@ -46,18 +50,22 @@ pipeline {
 
         stage("Push Images to Docker Hub") {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "dockerHubCreds",
-                    usernameVariable: "dockerHubUser",
-                    passwordVariable: "dockerHubPass"
-                )]) {
+                // withCredentials([usernamePassword(
+                //     credentialsId: "dockerHubCreds",
+                //     usernameVariable: "dockerHubUser",
+                //     passwordVariable: "dockerHubPass"
+                // )]) {
 
-                    sh """
-                        echo "${env.dockerHubPass}" | docker login -u "${env.dockerHubUser}" --password-stdin
-                        docker push ${env.dockerHubUser}/frontend-docker:latest
-                        docker push ${env.dockerHubUser}/backend-docker:latest
-                        docker logout
-                    """
+                //     sh """
+                //         echo "${env.dockerHubPass}" | docker login -u "${env.dockerHubUser}" --password-stdin
+                //         docker push ${env.dockerHubUser}/frontend-docker:latest
+                //         docker push ${env.dockerHubUser}/backend-docker:latest
+                //         docker logout
+                //     """
+                // }
+
+                script{
+                    docker_push(dockerHubCreds ,frontend-docker ,backend-docker )
                 }
             }
         }
