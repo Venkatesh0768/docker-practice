@@ -63,29 +63,24 @@ pipeline {
     }
     
     post {
-    failure {
-        emailext (
-            to: "rapoluvenky8@gmail.com",
-            subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            body: "Build ${env.BUILD_NUMBER} failed. Check Jenkins console output."
-        )
-    }
-        success {
-        script {
-            mail(
+        failure{
+            emailtext(
                 to: "rapoluvenky8@gmail.com",
-                subject: "Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                ✅ Build Successful!
-
-                Job Name: ${env.JOB_NAME}
-                Build Number: ${env.BUILD_NUMBER}
-                Build URL: ${env.BUILD_URL}
-
-                Docker images were built and deployed successfully.
-                """
+                subject: "Build Failed : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Build ${env.BUILD_NUMBER} failed. Check Jenkins console output.",
             )
         }
-    }
+        success{
+            script{
+                mail(
+                    to: "rapoluvenky8@gmail.com",
+                    subject: "Build Success : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: """
+                        Job name : ${env.JOB_NAME}
+                        Build Number : ${env.BUILD_NUMBER}
+                    """
+                )
+            }
+        }
     }
 }
