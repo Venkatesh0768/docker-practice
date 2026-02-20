@@ -1,3 +1,5 @@
+@Library('Shared') _
+
 pipeline {
     agent { 
         label 'dev'
@@ -7,7 +9,9 @@ pipeline {
 
         stage("Code Cloning") {
             steps {
-                git url: "https://github.com/Venkatesh0768/docker-practice.git", branch: "main"
+               script{
+                   clone("https://github.com/Venkatesh0768/docker-practice.git", "main")
+               }
             }
         }
         stage("trivy security checks") {
