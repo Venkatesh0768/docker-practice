@@ -54,7 +54,7 @@ const TodoPage = () => {
         {/* CREATE TODO CARD */}
         <div className="p-6 mb-8 bg-white shadow-lg rounded-2xl">
           <h2 className="mb-4 text-xl font-semibold text-gray-800">
-            Auto Instance is working
+            Email testing
           </h2>
 
           <form onSubmit={handleAddTodo} className="flex gap-3">
