@@ -74,7 +74,9 @@ pipeline {
         }
         success{
             script {
-                success_email()
+                emailext body: 'Working Pipeline',
+                            subject: 'Test Subject',
+                            to: 'rapoluvenky7@gmail.com'
             }
         }
     }
