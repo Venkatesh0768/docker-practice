@@ -61,4 +61,12 @@ pipeline {
             }
         }
     }
+    
+    post{
+        failure{
+            mail to: "rapoluvenky8@gmail.com",
+                subject: "Jenkins Build Failed: ${env.JOB_NAME}"
+                body: "Build ${env.BUILD_NUMBER} failed. Check Jenkins."
+        }
+    }
 }
