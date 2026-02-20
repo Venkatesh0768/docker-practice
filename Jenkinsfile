@@ -65,20 +65,21 @@ pipeline {
     post {
         failure{
             script {
-                failure_email(
-                    "rapoluvenky8@gmail.com",
-                    "Build Failed : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    "Docker build or deployment stage failed. Please check logs."
-                )
+                emailext(
+                    subject: "${currentBuild.currentResult}: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                    to: "rapoluvenky7@example.com",
+                    body: "${env.BUILD_URL}"
+                    )
+                }
             }
-        }
         success{
             script {
                 emailext(
-                    to: "rapoluvenky8@gmail.com",
-                    subject: "This is working subject",
-                    body: "testing "
-                )
+                    subject: "${currentBuild.currentResult}: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                    to: "rapoluvenky7@example.com",
+                    body: "${env.BUILD_URL}"
+                    )
+                }
             }
         }
     }
