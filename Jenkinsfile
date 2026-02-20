@@ -75,7 +75,7 @@ pipeline {
         success{
             script {
                 emailext(
-                    to: "rapoluvenky7@gmail.com",
+                    to: "rapoluvenky8@gmail.com",
                     subject: "This is working subject",
                     body: "testing "
                 )
