@@ -74,11 +74,7 @@ pipeline {
         }
         success{
             script {
-                success_email(
-                    "rapoluvenky8@gmail.com",
-                    "Build Success : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    "Your Docker images were built and deployed successfully."
-                )
+                success_email()
             }
         }
     }
