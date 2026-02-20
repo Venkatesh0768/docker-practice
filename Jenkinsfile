@@ -28,7 +28,7 @@ pipeline {
             steps {
                 dir("frontend") {
                     // sh "docker build -t venkatesh0768/frontend-docker:latest -f docker-production ."
-                    frontend_image(venkatesh0768 , frontend-docker ,docker-production)
+                    frontend_image("venkatesh0768" , "frontend-docker" ,"docker-production")
                 }
             }
         }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 dir("backend-todo") {
                     // sh "docker build -t venkatesh0768/backend-docker:latest -f spring-boot-distroless ."
-                    backend_image(venkatesh0768 ,backend-docker , spring-boot-distroless )
+                    backend_image("venkatesh0768" ,"backend-docker" , "spring-boot-distroless" )
                 }
             }
         }
@@ -65,7 +65,7 @@ pipeline {
                 // }
 
                 script{
-                    docker_push(dockerHubCreds ,frontend-docker ,backend-docker )
+                    docker_push("dockerHubCreds" ,"frontend-docker" ,"backend-docker" )
                 }
             }
         }
