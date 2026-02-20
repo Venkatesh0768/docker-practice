@@ -72,7 +72,6 @@ pipeline {
     post {
         failure{
             emailtext(
-                attachLog: true;
                 to: "rapoluvenky8@gmail.com",
                 subject: "Build Failed : ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "Build ${env.BUILD_NUMBER} failed. Check Jenkins console output.",
